@@ -23,7 +23,7 @@ class ExchangeHandler:
                     'fapiPrivate': 'https://testnet.binancefuture.com/fapi/v1'
                 }
             },
-            'test': true,
+            'test': True,
             'options': {
                 'defaultType': 'spot',
                 'adjustForTimeDifference': True,
