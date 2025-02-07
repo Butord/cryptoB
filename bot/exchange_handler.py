@@ -17,6 +17,10 @@ class ExchangeHandler:
             'options': {
                 'defaultType': 'spot',
                 'adjustForTimeDifference': True
+            },
+            'proxies': {
+                'http': 'http://proxy.replit.org:8080',
+                'https': 'http://proxy.replit.org:8080'
             }
         }
 
