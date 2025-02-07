@@ -18,9 +18,12 @@ class ExchangeHandler:
                 'api': {
                     'public': 'https://testnet.binance.vision/api/v3',
                     'private': 'https://testnet.binance.vision/api/v3',
-                    'test': 'https://testnet.binance.vision/api/v3'
+                    'test': 'https://testnet.binance.vision/api/v3',
+                    'fapiPublic': 'https://testnet.binancefuture.com/fapi/v1',
+                    'fapiPrivate': 'https://testnet.binancefuture.com/fapi/v1'
                 }
             },
+            'test': true,
             'options': {
                 'defaultType': 'spot',
                 'adjustForTimeDifference': True,
