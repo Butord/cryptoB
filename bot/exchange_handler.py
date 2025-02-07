@@ -14,11 +14,19 @@ class ExchangeHandler:
             'apiKey': api_key,
             'secret': api_secret,
             'enableRateLimit': True,
+            'urls': {
+                'api': {
+                    'public': 'https://testnet.binance.vision/api/v3',
+                    'private': 'https://testnet.binance.vision/api/v3',
+                    'test': 'https://testnet.binance.vision/api/v3'
+                }
+            },
             'options': {
                 'defaultType': 'spot',
                 'adjustForTimeDifference': True,
                 'createMarketBuyOrderRequiresPrice': False,
                 'recvWindow': 60000,
+                'test': True,
                 'warnOnFetchOHLCVLimitArgument': False,
                 'fetchTrades': {
                     'sort': 'timestamp',
