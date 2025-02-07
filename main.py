@@ -157,11 +157,13 @@ def main():
         with col2:
             st.subheader("🤖 Статус бота")
             status = st.empty()
+            exchange_handler = None
             try:
                 exchange_handler = ExchangeHandler(exchange)
                 status.success("✅ Бот працює")
             except Exception as e:
                 status.error(f"❌ Помилка: {str(e)}")
+                return
 
         # Initialize components
         technical_analyzer = TechnicalAnalyzer(
