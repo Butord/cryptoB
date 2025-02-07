@@ -1,6 +1,7 @@
 import pandas as pd
 import pandas_ta as ta
 import plotly.graph_objects as go
+import numpy as np  # Import numpy properly
 
 class TechnicalAnalyzer:
     def __init__(self, rsi_period=14, macd_fast=12, macd_slow=26, macd_signal=9):
@@ -13,11 +14,10 @@ class TechnicalAnalyzer:
         """Calculate technical indicators for the given dataframe"""
         try:
             # RSI
-            df['rsi'] = ta.rsi(df['close'], length=self.rsi_period)
+            df['rsi'] = df.ta.rsi(length=self.rsi_period)
 
             # MACD
-            macd = ta.macd(
-                df['close'],
+            macd = df.ta.macd(
                 fast=self.macd_fast,
                 slow=self.macd_slow,
                 signal=self.macd_signal
@@ -27,12 +27,12 @@ class TechnicalAnalyzer:
             df['macd_hist'] = macd['MACDh_' + str(self.macd_fast) + '_' + str(self.macd_slow) + '_' + str(self.macd_signal)]
 
             # Moving Averages
-            df['sma_20'] = ta.sma(df['close'], length=20)
-            df['sma_50'] = ta.sma(df['close'], length=50)
-            df['ema_20'] = ta.ema(df['close'], length=20)
+            df['sma_20'] = df.ta.sma(length=20)
+            df['sma_50'] = df.ta.sma(length=50)
+            df['ema_20'] = df.ta.ema(length=20)
 
             # Bollinger Bands
-            bb = ta.bbands(df['close'], length=20)
+            bb = df.ta.bbands(length=20)
             df['bb_upper'] = bb['BBU_20_2.0']
             df['bb_middle'] = bb['BBM_20_2.0']
             df['bb_lower'] = bb['BBL_20_2.0']
