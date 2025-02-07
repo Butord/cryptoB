@@ -28,8 +28,9 @@ class ExchangeHandler:
             'timeout': 30000,
             'urls': {
                 'api': {
-                    'public': 'https://testnet.binance.vision/api/v3',
-                    'private': 'https://testnet.binance.vision/api/v3'
+                    'public': 'https://testnet.binancefuture.com/api/v3',
+                    'private': 'https://testnet.binancefuture.com/api/v3',
+                    'test': 'https://testnet.binancefuture.com/api/v3'
                 }
             },
             'test': True,
