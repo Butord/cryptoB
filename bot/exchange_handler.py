@@ -16,14 +16,7 @@ class ExchangeHandler:
             'enableRateLimit': True,
             'options': {
                 'defaultType': 'spot',
-                'adjustForTimeDifference': True,
-                'testnet': True  # Use testnet for development
-            },
-            'urls': {
-                'api': {
-                    'public': 'https://testnet.binance.vision/api/v3',
-                    'private': 'https://testnet.binance.vision/api/v3',
-                }
+                'adjustForTimeDifference': True
             }
         }
 
