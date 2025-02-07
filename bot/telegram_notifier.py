@@ -43,23 +43,31 @@ class TelegramNotifier:
         message = f"🚨 <b>Trading Signal</b> 🚨\n\n"
         message += f"📊 Pair: {pair}\n"
         message += f"⚡ Signal: {signal_type}\n"
-        message += f"💰 Entry Price: {entry_price}\n\n"
+        message += f"💰 Entry Price: {entry_price:.8f}\n\n"
 
         message += "🎯 Targets:\n"
         for i, target in enumerate(targets, 1):
-            message += f"   Target {i}: {target}\n"
+            message += f"   Target {i}: {target:.8f}\n"
 
-        message += f"\n🛑 Stop Loss: {stop_loss}\n\n"
+        message += f"\n🛑 Stop Loss: {stop_loss:.8f}\n\n"
 
         if indicators:
             message += "📈 Technical Indicators:\n"
             for indicator, value in indicators.items():
-                message += f"   {indicator}: {value}\n"
+                if indicator == 'RSI':
+                    message += f"   RSI: {value:.2f} ({'Oversold' if value < 30 else 'Overbought' if value > 70 else 'Neutral'})\n"
+                elif indicator == 'MACD':
+                    message += f"   MACD: {value:.8f}\n"
+                elif indicator == 'Signal':
+                    message += f"   Signal Line: {value:.8f}\n"
+                else:
+                    message += f"   {indicator}: {value}\n"
 
         if news_sentiment is not None:
             sentiment_emoji = "😊" if news_sentiment > 0 else "😐" if news_sentiment == 0 else "😟"
             message += f"\n📰 News Sentiment: {sentiment_emoji} {news_sentiment:.2f}\n"
 
+        message += f"\n⚠️ This is using Binance Testnet data\n"
         message += f"\n⏰ Time: {timestamp}"
 
         # Send message asynchronously
