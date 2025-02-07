@@ -16,19 +16,17 @@ class ExchangeHandler:
             'enableRateLimit': True,
             'urls': {
                 'api': {
-                    'public': 'https://testnet.binance.vision/api/v3',
-                    'private': 'https://testnet.binance.vision/api/v3',
-                    'test': 'https://testnet.binance.vision/api/v3',
-                    'sapi': 'https://testnet.binance.vision/sapi/v1'
+                    'public': 'https://api.binance.com/api/v3',
+                    'private': 'https://api.binance.com/api/v3',
+                    'sapi': 'https://api.binance.com/sapi/v1'
                 }
             },
-            'test': True,
+            'test': False,
             'options': {
                 'defaultType': 'spot',
                 'adjustForTimeDifference': True,
                 'createMarketBuyOrderRequiresPrice': False,
                 'recvWindow': 60000,
-                'test': True,
                 'warnOnFetchOHLCVLimitArgument': False,
                 'fetchTrades': {
                     'sort': 'timestamp',
