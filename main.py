@@ -12,6 +12,7 @@ from bot.signal_generator import SignalGenerator
 from bot.database import init_db, db_session
 from bot.models import BotSettings, TradingSignal
 from utils.logger import setup_logger
+from bot.signal_monitor import SignalMonitor # Import SignalMonitor
 
 logger = setup_logger()
 
@@ -166,6 +167,28 @@ def main():
 
         telegram_notifier = TelegramNotifier(telegram_token, telegram_chat_id)
         signal_generator = SignalGenerator()
+
+        # Initialize signal monitor
+        pairs_list = [pair.strip() for pair in trading_pairs.split(",")]
+        signal_monitor = SignalMonitor(
+            exchange_handler=exchange_handler,
+            technical_analyzer=technical_analyzer,
+            signal_generator=signal_generator,
+            telegram_notifier=telegram_notifier,
+            pairs=pairs_list
+        )
+
+        # Add signal monitoring control
+        st.sidebar.subheader("🔔 Моніторинг сигналів")
+        monitor_enabled = st.sidebar.checkbox("Увімкнути моніторинг сигналів", value=False)
+
+        if monitor_enabled:
+            signal_monitor.start()
+            st.sidebar.success("✅ Моніторинг сигналів активний")
+        else:
+            signal_monitor.stop()
+            st.sidebar.info("ℹ️ Моніторинг сигналів вимкнено")
+
 
         # Display latest signals
         st.subheader("📊 Останні сигнали")
