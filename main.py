@@ -79,6 +79,15 @@ def main():
         # Initialize database
         init_db()
 
+        # Add warning about testnet
+        st.sidebar.markdown("""
+        <div style='background-color: #FF4B4B; padding: 10px; border-radius: 5px; margin-bottom: 20px;'>
+        ⚠️ <b>Важливе попередження</b><br>
+        Бот працює в тестовому режимі (Binance Testnet).<br>
+        Сигнали генеруються на основі тестових даних і не повинні використовуватися для реальної торгівлі.
+        </div>
+        """, unsafe_allow_html=True)
+
         # Sidebar configuration
         st.sidebar.header("⚙️ Налаштування")
 
