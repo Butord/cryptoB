@@ -35,6 +35,7 @@ class ExchangeHandler:
                 'createMarketBuyOrderRequiresPrice': False,
                 'recvWindow': 60000,
             },
+            'timeout': 30000,
             'proxies': {
                 'http': 'http://proxy.replit.org:8080',
                 'https': 'http://proxy.replit.org:8080'
