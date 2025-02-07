@@ -10,12 +10,23 @@ class ExchangeHandler:
         api_secret = os.getenv('BINANCE_API_SECRET')
 
         # Initialize exchange with API credentials
-        self.exchange = getattr(ccxt, exchange_id)({
+        exchange_config = {
             'apiKey': api_key,
             'secret': api_secret,
             'enableRateLimit': True,
-            'options': {'defaultType': 'future'}
-        })
+            'options': {
+                'defaultType': 'spot',  # Changed from future to spot
+                'adjustForTimeDifference': True,
+            },
+            'urls': {
+                'api': {
+                    'public': 'https://api.binance.com/api/v3',
+                    'private': 'https://api.binance.com/api/v3',
+                }
+            }
+        }
+
+        self.exchange = getattr(ccxt, exchange_id)(exchange_config)
 
         # Test connection
         try:
@@ -27,21 +38,32 @@ class ExchangeHandler:
     def get_ohlcv(self, symbol, timeframe='1h', limit=100):
         """Get OHLCV data for a symbol"""
         try:
-            ohlcv = self.exchange.fetch_ohlcv(
-                symbol,
-                timeframe=timeframe,
-                limit=limit
-            )
+            # Add retry mechanism
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    ohlcv = self.exchange.fetch_ohlcv(
+                        symbol,
+                        timeframe=timeframe,
+                        limit=limit
+                    )
 
-            df = pd.DataFrame(
-                ohlcv,
-                columns=['timestamp', 'open', 'high', 'low', 'close', 'volume']
-            )
+                    if not ohlcv:
+                        raise Exception("Empty OHLCV data received")
 
-            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-            df.set_index('timestamp', inplace=True)
+                    df = pd.DataFrame(
+                        ohlcv,
+                        columns=['timestamp', 'open', 'high', 'low', 'close', 'volume']
+                    )
 
-            return df
+                    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+                    df.set_index('timestamp', inplace=True)
+
+                    return df
+                except Exception as e:
+                    if attempt == max_retries - 1:
+                        raise e
+                    print(f"Attempt {attempt + 1} failed, retrying...")
 
         except Exception as e:
             print(f"Error fetching OHLCV data: {str(e)}")
