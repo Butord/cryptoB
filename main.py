@@ -181,6 +181,20 @@ def main():
 
         # Display charts
         st.subheader("📈 Аналіз ринку")
+
+        # Add pair selector
+        pairs_list = [pair.strip() for pair in trading_pairs.split(",")]
+        selected_pair = st.selectbox(
+            "Виберіть торгову пару для аналізу",
+            pairs_list,
+            index=0
+        )
+
+        # Add auto-refresh option
+        auto_refresh = st.checkbox("🔄 Автоматичне оновлення", value=True)
+        if auto_refresh:
+            st.empty()  # This will force a rerun every few seconds
+
         chart_placeholder = st.empty()
 
         def plot_analysis(pair):
@@ -211,14 +225,13 @@ def main():
 
                 return fig
 
-        # Display chart for first trading pair
-        first_pair = trading_pairs.split(",")[0].strip()
+        # Display chart for selected pair
         try:
-            chart = plot_analysis(first_pair)
+            chart = plot_analysis(selected_pair)
             if chart:
                 chart_placeholder.plotly_chart(chart, use_container_width=True)
             else:
-                chart_placeholder.error(f"❌ Помилка отримання даних для {first_pair}")
+                chart_placeholder.error(f"❌ Помилка отримання даних для {selected_pair}")
         except Exception as e:
             st.error(f"❌ Помилка побудови графіка: {str(e)}")
 
