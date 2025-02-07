@@ -15,25 +15,25 @@ class ExchangeHandler:
             'secret': api_secret,
             'enableRateLimit': True,
             'options': {
-                'defaultType': 'spot',  # Changed from future to spot
+                'defaultType': 'spot',
                 'adjustForTimeDifference': True,
+                'testnet': True  # Use testnet for development
             },
             'urls': {
                 'api': {
-                    'public': 'https://api.binance.com/api/v3',
-                    'private': 'https://api.binance.com/api/v3',
+                    'public': 'https://testnet.binance.vision/api/v3',
+                    'private': 'https://testnet.binance.vision/api/v3',
                 }
             }
         }
 
-        self.exchange = getattr(ccxt, exchange_id)(exchange_config)
-
-        # Test connection
         try:
+            self.exchange = getattr(ccxt, exchange_id)(exchange_config)
             self.exchange.load_markets()
-            print(f"Successfully connected to {exchange_id}")
+            print(f"Successfully connected to {exchange_id} testnet")
         except Exception as e:
             print(f"Error connecting to {exchange_id}: {str(e)}")
+            raise
 
     def get_ohlcv(self, symbol, timeframe='1h', limit=100):
         """Get OHLCV data for a symbol"""
