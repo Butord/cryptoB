@@ -1,7 +1,7 @@
 import pandas as pd
-import pandas_ta as ta
+import numpy as np
 import plotly.graph_objects as go
-import numpy as np  # Import numpy properly
+from typing import Dict, List, Tuple
 
 class TechnicalAnalyzer:
     def __init__(self, rsi_period=14, macd_fast=12, macd_slow=26, macd_signal=9):
@@ -10,38 +10,61 @@ class TechnicalAnalyzer:
         self.macd_slow = macd_slow
         self.macd_signal = macd_signal
 
-    def calculate_indicators(self, df):
+    def calculate_rsi(self, data: pd.Series, periods: int = 14) -> pd.Series:
+        """Calculate RSI indicator"""
+        delta = data.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=periods).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=periods).mean()
+        rs = gain / loss
+        return 100 - (100 / (1 + rs))
+
+    def calculate_macd(self, data: pd.Series) -> Tuple[pd.Series, pd.Series, pd.Series]:
+        """Calculate MACD indicator"""
+        exp1 = data.ewm(span=self.macd_fast).mean()
+        exp2 = data.ewm(span=self.macd_slow).mean()
+        macd = exp1 - exp2
+        signal = macd.ewm(span=self.macd_signal).mean()
+        hist = macd - signal
+        return macd, signal, hist
+
+    def calculate_sma(self, data: pd.Series, period: int) -> pd.Series:
+        """Calculate Simple Moving Average"""
+        return data.rolling(window=period).mean()
+
+    def calculate_ema(self, data: pd.Series, period: int) -> pd.Series:
+        """Calculate Exponential Moving Average"""
+        return data.ewm(span=period).mean()
+
+    def calculate_bollinger_bands(self, data: pd.Series, period: int = 20, num_std: float = 2) -> Tuple[pd.Series, pd.Series, pd.Series]:
+        """Calculate Bollinger Bands"""
+        middle_band = self.calculate_sma(data, period)
+        std = data.rolling(window=period).std()
+        upper_band = middle_band + (std * num_std)
+        lower_band = middle_band - (std * num_std)
+        return upper_band, middle_band, lower_band
+
+    def calculate_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
         """Calculate technical indicators for the given dataframe"""
         try:
             # RSI
-            df['rsi'] = df.ta.rsi(length=self.rsi_period)
+            df['rsi'] = self.calculate_rsi(df['close'], self.rsi_period)
 
             # MACD
-            macd = df.ta.macd(
-                fast=self.macd_fast,
-                slow=self.macd_slow,
-                signal=self.macd_signal
-            )
-            df['macd'] = macd['MACD_' + str(self.macd_fast) + '_' + str(self.macd_slow) + '_' + str(self.macd_signal)]
-            df['macd_signal'] = macd['MACDs_' + str(self.macd_fast) + '_' + str(self.macd_slow) + '_' + str(self.macd_signal)]
-            df['macd_hist'] = macd['MACDh_' + str(self.macd_fast) + '_' + str(self.macd_slow) + '_' + str(self.macd_signal)]
+            df['macd'], df['macd_signal'], df['macd_hist'] = self.calculate_macd(df['close'])
 
             # Moving Averages
-            df['sma_20'] = df.ta.sma(length=20)
-            df['sma_50'] = df.ta.sma(length=50)
-            df['ema_20'] = df.ta.ema(length=20)
+            df['sma_20'] = self.calculate_sma(df['close'], 20)
+            df['sma_50'] = self.calculate_sma(df['close'], 50)
+            df['ema_20'] = self.calculate_ema(df['close'], 20)
 
             # Bollinger Bands
-            bb = df.ta.bbands(length=20)
-            df['bb_upper'] = bb['BBU_20_2.0']
-            df['bb_middle'] = bb['BBM_20_2.0']
-            df['bb_lower'] = bb['BBL_20_2.0']
+            df['bb_upper'], df['bb_middle'], df['bb_lower'] = self.calculate_bollinger_bands(df['close'])
 
             return df
         except Exception as e:
             raise Exception(f"Error calculating indicators: {str(e)}")
 
-    def add_indicators_to_plot(self, fig, df):
+    def add_indicators_to_plot(self, fig: go.Figure, df: pd.DataFrame) -> None:
         """Add technical indicators to the plotly figure"""
         # Calculate indicators
         df = self.calculate_indicators(df)
@@ -118,7 +141,7 @@ class TechnicalAnalyzer:
             )
         )
 
-    def generate_signals(self, df):
+    def generate_signals(self, df: pd.DataFrame) -> List[Tuple[str, str, str]]:
         """Generate trading signals based on technical indicators"""
         signals = []
         df = self.calculate_indicators(df)
