@@ -19,8 +19,7 @@ class ExchangeHandler:
                     'public': 'https://testnet.binance.vision/api/v3',
                     'private': 'https://testnet.binance.vision/api/v3',
                     'test': 'https://testnet.binance.vision/api/v3',
-                    'fapiPublic': 'https://testnet.binancefuture.com/fapi/v1',
-                    'fapiPrivate': 'https://testnet.binancefuture.com/fapi/v1'
+                    'sapi': 'https://testnet.binance.vision/sapi/v1'
                 }
             },
             'test': True,
@@ -37,15 +36,6 @@ class ExchangeHandler:
                 }
             },
             'timeout': 30000,
-            'apiKey': api_key,
-            'secret': api_secret,
-            'enableRateLimit': True,
-            'options': {
-                'defaultType': 'spot',
-                'adjustForTimeDifference': True,
-                'createMarketBuyOrderRequiresPrice': False,
-                'recvWindow': 60000,
-            },
             'timeout': 30000,
             'proxies': {
                 'http': 'http://proxy.replit.org:8080',
